@@ -245,3 +245,29 @@ Note that the following images were also used in the paper but are unavailable a
 
 We have added a detailed parameter search procedure to `supporting_tools/seqcdc-parameter-search/README.md`. Related scripts can be found in the same directory.
 
+
+---
+
+## Fork: mincatcdc integration
+
+This fork adds `chunking_algo=mincdc`, backed by the
+[mincatcdc](https://github.com/russellromney/mincatcdc) Rust library
+(MinCDC with a SIMD packed-scanning caterpillar layer), so it can be measured
+by the same harness, timers, and dedup measurement as every other technique.
+
+```sh
+# 1. Build the Rust static library (sibling checkout)
+git clone https://github.com/russellromney/mincatcdc ../mincatcdc
+(cd ../mincatcdc && cargo build --release --features capi)
+
+# 2. Build dedup-bench as usual (MINCATCDC_LIB overrides the sibling default)
+cd build && make all        # or make simd_all etc.
+
+# 3. Run — configs in build/config_mincdc/
+./dedup.exe <dataset_dir> config_mincdc/mincdc_8kb.conf t      # plain MinCDC
+./dedup.exe <dataset_dir> config_mincdc/mincdccat_8kb.conf t   # packed caterpillar
+```
+
+Config keys: `mincdc_min_block_size`, `mincdc_max_block_size`,
+`mincdc_caterpillar` (`true` enables the packed fast path; chunk boundaries and
+hash output are byte-identical in both modes — only the speed differs).
