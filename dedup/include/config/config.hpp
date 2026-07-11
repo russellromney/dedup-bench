@@ -48,6 +48,10 @@
 #define TTTD_MAX_BLOCK_SIZE "tttd_max_block_size"
 #define TTTD_AVG_BLOCK_SIZE "tttd_avg_block_size"
 
+#define MINCDC_MIN_BLOCK_SIZE "mincdc_min_block_size"
+#define MINCDC_MAX_BLOCK_SIZE "mincdc_max_block_size"
+#define MINCDC_CATERPILLAR "mincdc_caterpillar"
+
 #define EXP_MIN_BLOCK_SIZE "exp_min_block_size"
 #define EXP_JUMP_THRESHOLD "exp_jump_threshold"
 #define EXP_JUMP_AMOUNT "exp_jump_amount"
@@ -68,6 +72,7 @@ enum class ChunkingTech {
     CRC,
     SEQ,
     TTTD,
+    MINCDC,
 };
 
 enum class SIMD_Mode{
@@ -129,6 +134,15 @@ class Config {
      */
 
     uint64_t get_fc_size() const;
+
+    /**
+     * @brief Min/max chunk sizes and caterpillar toggle for MinCDC
+     * (mincatcdc). Sizes throw ConfigError when missing; the caterpillar
+     * toggle defaults to false.
+     */
+    uint64_t get_mincdc_min_block_size() const;
+    uint64_t get_mincdc_max_block_size() const;
+    bool get_mincdc_caterpillar() const;
 
     /**
      * @brief Get the size of the sliding window when using any sliding window

@@ -31,11 +31,44 @@ ChunkingTech Config::get_chunking_tech() const {
             return ChunkingTech::SEQ;
         } else if (value == "tttd"){
             return ChunkingTech::TTTD;
+        } else if (value == "mincdc") {
+            return ChunkingTech::MINCDC;
         }
     } catch (...) {
     }
     throw ConfigError(
         "The configuration file does not specify a valid chunking technique");
+}
+
+uint64_t Config::get_mincdc_min_block_size() const {
+    try {
+        std::string value = parser.get_property(MINCDC_MIN_BLOCK_SIZE);
+        return std::stoull(value);
+    } catch (...) {
+    }
+    throw ConfigError(
+        "The configuration file does not specify a valid minimum block size "
+        "for mincdc chunking");
+}
+
+uint64_t Config::get_mincdc_max_block_size() const {
+    try {
+        std::string value = parser.get_property(MINCDC_MAX_BLOCK_SIZE);
+        return std::stoull(value);
+    } catch (...) {
+    }
+    throw ConfigError(
+        "The configuration file does not specify a valid maximum block size "
+        "for mincdc chunking");
+}
+
+bool Config::get_mincdc_caterpillar() const {
+    try {
+        std::string value = parser.get_property(MINCDC_CATERPILLAR);
+        return value == "true";
+    } catch (...) {
+    }
+    return false;
 }
 
 HashingTech Config::get_hashing_tech() const {

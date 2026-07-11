@@ -33,6 +33,7 @@
 #include "seq_chunking.hpp"
 #include "tttd_chunking.hpp"
 #include "maxp_chunking.hpp"
+#include "mincdc_chunking.hpp"
 
 #include "md5_hashing.hpp"
 #include "sha1_hashing.hpp"
@@ -189,6 +190,9 @@ int main(int argc, char* argv[]) {
                 break;
             case ChunkingTech::TTTD:
                 chunk_method = std::make_unique<TTTD_Chunking>(config);
+                break;
+            case ChunkingTech::MINCDC:
+                chunk_method = std::make_unique<MinCDC_Chunking>(config);
                 break;
             default:
                 std::cerr << "Unimplemented chunking technique" << std::endl;
