@@ -1,6 +1,6 @@
 /**
  * @file mincdc_chunking.cpp
- * @brief MinCDC / mincatcdc chunking technique (see mincdc_chunking.hpp).
+ * @brief MinCDC / mothcdc chunking technique (see mincdc_chunking.hpp).
  */
 #include "mincdc_chunking.hpp"
 
@@ -11,7 +11,7 @@ MinCDC_Chunking::MinCDC_Chunking(const Config &config) {
     max_block_size = config.get_mincdc_max_block_size();
     caterpillar = config.get_mincdc_caterpillar();
     technique_name =
-        caterpillar ? "MinCDC (mincatcdc, packed caterpillar)" : "MinCDC (mincatcdc)";
+        caterpillar ? "MinCDC (mothcdc, packed caterpillar)" : "MinCDC (mothcdc)";
     // chunk_stream keeps its buffer full except at end of stream, so a
     // buffer shorter than one full decision window implies eof — but only
     // if the buffer can hold a full window in the first place.
@@ -33,7 +33,7 @@ uint64_t MinCDC_Chunking::find_cutpoint(char *buff, uint64_t size) {
     // driver never under-fills mid-stream); the library then uses its
     // truncated-window (eof) branches, matching SliceChunker semantics.
     int eof = size < max_block_size + 1;
-    size_t len = mincatcdc_next_chunk(
+    size_t len = mothcdc_next_chunk(
         reinterpret_cast<const uint8_t *>(buff), size, min_block_size,
         max_block_size, eof, caterpillar ? &repeats : nullptr);
     if (len == 0) {

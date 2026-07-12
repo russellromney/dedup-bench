@@ -1,6 +1,6 @@
 /**
  * @file mincdc_chunking.hpp
- * @brief MinCDC / mincatcdc chunking via the mincatcdc Rust library
+ * @brief MinCDC / mothcdc chunking via the mothcdc Rust library
  *        (https://github.com/russellromney/mincatcdc, feature `capi`).
  *
  * Two modes, selected by the `mincdc_caterpillar` config key:
@@ -20,9 +20,9 @@
 #include "config.hpp"
 
 extern "C" {
-/// From libmincatcdc.a (cargo build --release --features capi).
-size_t mincatcdc_next_chunk(const uint8_t *data, size_t len, size_t min_size,
-                            size_t max_size, int eof, size_t *repeats_out);
+/// From libmothcdc.a (cargo build --release --features capi).
+size_t mothcdc_next_chunk(const uint8_t *data, size_t len, size_t min_size,
+                          size_t max_size, int eof, size_t *repeats_out);
 }
 
 class MinCDC_Chunking : public virtual Chunking_Technique {

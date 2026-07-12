@@ -248,19 +248,19 @@ We have added a detailed parameter search procedure to `supporting_tools/seqcdc-
 
 ---
 
-## Fork: mincatcdc integration
+## Fork: mothcdc integration
 
 This fork adds `chunking_algo=mincdc`, backed by the
-[mincatcdc](https://github.com/russellromney/mincatcdc) Rust library
+[mothcdc](https://github.com/russellromney/mincatcdc) Rust library
 (MinCDC with a SIMD packed-scanning caterpillar layer), so it can be measured
 by the same harness, timers, and dedup measurement as every other technique.
 
 ```sh
 # 1. Build the Rust static library (sibling checkout)
-git clone https://github.com/russellromney/mincatcdc ../mincatcdc
-(cd ../mincatcdc && cargo build --release --features capi)
+git clone https://github.com/russellromney/mincatcdc ../mothcdc
+(cd ../mothcdc && cargo build --release --features capi)
 
-# 2. Build dedup-bench as usual (MINCATCDC_LIB overrides the sibling default)
+# 2. Build dedup-bench as usual (MOTHCDC_LIB overrides the sibling default)
 cd build && make all        # or make simd_all etc.
 
 # 3. Run — configs in build/config_mincdc/

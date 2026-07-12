@@ -22,11 +22,12 @@ INCLUDE_FLAGS += -I ${INCLUDE_PATH_OPENSSL}
 
 LD_FLAGS = -L /usr/local/opt/openssl@3/lib -lcrypto -lxxhash
 
-# mincatcdc (Rust) static library for the mincdc chunking technique.
+# mothcdc (Rust) static library for the mincdc chunking technique.
 # Build it with: cargo build --release --features capi
-# Default assumes a sibling checkout of https://github.com/russellromney/mincatcdc
-MINCATCDC_LIB ?= ../../../mincatcdc/target/release/libmincatcdc.a
-LD_FLAGS += $(MINCATCDC_LIB)
+# Default assumes a sibling checkout of https://github.com/russellromney/mincatcdc,
+# cloned into ../../../mothcdc/
+MOTHCDC_LIB ?= ../../../mothcdc/target/release/libmothcdc.a
+LD_FLAGS += $(MOTHCDC_LIB)
 ifeq ($(shell uname -s),Linux)
 LD_FLAGS += -lpthread -ldl -lm
 endif
