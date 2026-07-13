@@ -10,6 +10,7 @@ MinCDC_Chunking::MinCDC_Chunking(const Config &config) {
     min_block_size = config.get_mincdc_min_block_size();
     max_block_size = config.get_mincdc_max_block_size();
     caterpillar = config.get_mincdc_caterpillar();
+    coalesce_identical_metadata_records(caterpillar);
     technique_name =
         caterpillar ? "MinCDC (mothcdc, packed caterpillar)" : "MinCDC (mothcdc)";
     // chunk_stream keeps its buffer full except at end of stream, so a

@@ -18,6 +18,10 @@ jobs:
       run: sudo apt install -y libssl-dev libxxhash-dev
       working-directory: build
 
+    - name: Test metadata accounting
+      run: make test
+      working-directory: build
+
     - name: Check base build
       run: make all
       working-directory: build
@@ -25,4 +29,3 @@ jobs:
     - name: Check SIMD build
       run: make simd_all
       working-directory: build
-

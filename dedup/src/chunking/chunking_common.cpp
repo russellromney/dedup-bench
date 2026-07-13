@@ -18,6 +18,7 @@
 #include <fstream>
 #include <memory>
 #include <string>
+#include <algorithm>
 
 extern bool disable_hashing;
 
@@ -117,11 +118,44 @@ std::unique_ptr<std::istream> Chunking_Technique::read_file_to_buffer(std::strin
 }
 
 std::vector<std::string> Chunking_Technique::chunk_file(std::string file_path) {
+    reset_metadata_records();
     std::vector<std::string> hashes;
     std::ifstream file_ptr;
     file_ptr.open(file_path, std::ios::in);
     chunk_stream(hashes, file_ptr);
     return hashes;
+}
+
+void Chunking_Technique::coalesce_identical_metadata_records(bool enabled) {
+    coalesce_metadata_records = enabled;
+}
+
+void Chunking_Technique::reset_metadata_records() {
+    file_metadata_records = 0;
+    have_previous_metadata_chunk = false;
+    previous_metadata_chunk.clear();
+}
+
+void Chunking_Technique::record_metadata_chunk(const char* data, uint64_t size) {
+    bool matches_previous = false;
+    if (coalesce_metadata_records && have_previous_metadata_chunk &&
+        previous_metadata_chunk.size() == size) {
+        matches_previous = std::equal(previous_metadata_chunk.begin(),
+                                      previous_metadata_chunk.end(), data);
+    }
+
+    if (!matches_previous) {
+        ++file_metadata_records;
+    }
+
+    if (coalesce_metadata_records && !matches_previous) {
+        previous_metadata_chunk.assign(data, data + size);
+        have_previous_metadata_chunk = true;
+    }
+}
+
+uint64_t Chunking_Technique::get_file_metadata_records() const {
+    return file_metadata_records;
 }
 
 int64_t Chunking_Technique::create_chunk(std::vector<std::string>& hashes,
@@ -132,6 +166,8 @@ int64_t Chunking_Technique::create_chunk(std::vector<std::string>& hashes,
     // finish timing chunking
     auto end_chunking = std::chrono::high_resolution_clock::now();
     total_time_chunking += (end_chunking - begin_chunking);
+    // Metadata accounting is deliberately outside the measured chunking timer.
+    record_metadata_chunk(buffer, chunk_size);
     // create chunk
     File_Chunk new_chunk{chunk_size};
     memcpy(new_chunk.get_data(), buffer, chunk_size);
@@ -155,7 +191,9 @@ void Chunking_Technique::chunk_stream(std::vector<std::string>& hashes,
         buffer_size = this->stream_buffer_size;
     }
     int64_t bytes_left = get_file_size(&stream);
-    buffer.reserve(buffer_size);
+    // The stream writes directly into data(), so these elements must exist;
+    // reserve() alone only allocates capacity and leaves such writes undefined.
+    buffer.resize(buffer_size);
     // initial chunk_size to allow the read of full buffer size
     int64_t chunk_size = buffer_size;
     // logical buffer end

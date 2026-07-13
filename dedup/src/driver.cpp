@@ -57,6 +57,7 @@ static void driver_function(const std::filesystem::path& dir_path,
      */
     const std::string delimiter = ", ";
     uint64_t chunk_count = 0;
+    uint64_t metadata_record_count = 0;
     uint64_t total_bytes = 0;
     
     if (!std::filesystem::is_directory(dir_path)) {
@@ -94,6 +95,7 @@ static void driver_function(const std::filesystem::path& dir_path,
         // get the size of the file
         total_bytes += chunk_method->get_file_size(&file_ptr);
         chunk_count += hashes.size();
+        metadata_record_count += chunk_method->get_file_metadata_records();
 
         for (const auto& hash : hashes) {
             out_file << hash << std::endl;
@@ -107,6 +109,7 @@ static void driver_function(const std::filesystem::path& dir_path,
     double total_seconds_hashing =  chunk_method->total_time_hashing.count() /1000;
      // Print stats
     std::cout << "Total number of chunks: " << chunk_count << std::endl;
+    std::cout << "Total metadata records: " << metadata_record_count << std::endl;
     std::cout << "Total bytes chunked: " << total_bytes << std::endl;
     std::cout << "Avg Chunk size: " << total_bytes / chunk_count
               << std::endl;

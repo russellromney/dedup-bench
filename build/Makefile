@@ -64,7 +64,12 @@ simd512_all:
 .PHONY: clean
 clean:
 	cd $(DEDUP_BUILD_PATH) && make $@
+	$(MAKE) -C ../dedup/tests clean
 	cd $(MEASURE_DEDUP_BUILD_PATH) && make $@
 	cd $(MEASURE_LOW_ENTROPY_BUILD_PATH) && make $@
 	
 	$(RM) *.exe
+
+.PHONY: test
+test:
+	$(MAKE) -C ../dedup/tests test

@@ -20,7 +20,8 @@
 #include "config.hpp"
 
 extern "C" {
-/// From libmothcdc.a (cargo build --release --features capi).
+/// From libmothcdc.a (`cargo rustc --release --features capi --lib --
+/// --crate-type staticlib`).
 size_t mothcdc_next_chunk(const uint8_t *data, size_t len, size_t min_size,
                           size_t max_size, int eof, size_t *repeats_out);
 }

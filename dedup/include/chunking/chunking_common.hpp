@@ -40,6 +40,22 @@ class Chunking_Technique{
          * @return: size of the chunk
          */
         int64_t create_chunk(std::vector<std::string>& hashes, char* data, uint64_t buffer_end);
+
+        /**
+         * Make adjacent byte-identical, equal-length chunks share one metadata
+         * record. Conventional chunkers leave this disabled, so every emitted
+         * chunk is one metadata record.
+         */
+        void coalesce_identical_metadata_records(bool enabled);
+
+    private:
+        bool coalesce_metadata_records = false;
+        bool have_previous_metadata_chunk = false;
+        uint64_t file_metadata_records = 0;
+        std::vector<char> previous_metadata_chunk;
+
+        void reset_metadata_records();
+        void record_metadata_chunk(const char* data, uint64_t size);
         
     public:
         std::string technique_name;
@@ -79,6 +95,9 @@ class Chunking_Technique{
          * @return: Vector of struct File_Chunk
          */
         std::vector<std::string> chunk_file(std::string file_path);
+
+        /** Number of metadata records emitted for the most recent file. */
+        uint64_t get_file_metadata_records() const;
         /**
          * @brief Chunk a stream using a chunking technique and append the struct File_Chunks from this operation
          * to the vector passed in

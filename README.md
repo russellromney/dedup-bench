@@ -251,14 +251,14 @@ We have added a detailed parameter search procedure to `supporting_tools/seqcdc-
 ## Fork: mothcdc integration
 
 This fork adds `chunking_algo=mincdc`, backed by the
-[mothcdc](https://github.com/russellromney/mincatcdc) Rust library
+[mothcdc](https://github.com/russellromney/mothcdc) Rust library
 (MinCDC with a SIMD packed-scanning caterpillar layer), so it can be measured
 by the same harness, timers, and dedup measurement as every other technique.
 
 ```sh
 # 1. Build the Rust static library (sibling checkout)
-git clone https://github.com/russellromney/mincatcdc ../mothcdc
-(cd ../mothcdc && cargo build --release --features capi)
+git clone https://github.com/russellromney/mothcdc ../mothcdc
+(cd ../mothcdc && cargo rustc --release --features capi --lib -- --crate-type staticlib)
 
 # 2. Build dedup-bench as usual (MOTHCDC_LIB overrides the sibling default)
 cd build && make all        # or make simd_all etc.
@@ -271,3 +271,9 @@ cd build && make all        # or make simd_all etc.
 Config keys: `mincdc_min_block_size`, `mincdc_max_block_size`,
 `mincdc_caterpillar` (`true` enables the packed fast path; chunk boundaries and
 hash output are byte-identical in both modes — only the speed differs).
+
+The driver reports both `Total number of chunks` and `Total metadata records`.
+For conventional chunkers these counts are identical. In caterpillar mode,
+maximal per-file runs of adjacent byte-identical, equal-length chunks share one
+metadata record while the harness still emits every underlying chunk hash, so
+deduplication measurements remain directly comparable.
